@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/android studio project/Kotlin/Kotlin/CoinApp/app/src/main/res/layout/activity_main.xml" value="0.13903985507246377" />
+        <entry key="..\:/android studio project/Kotlin/Kotlin/CoinApp/app/src/main/res/layout/fragment_coin_details.xml" value="0.12360688956433637" />
+        <entry key="..\:/android studio project/Kotlin/Kotlin/CoinApp/app/src/main/res/layout/fragment_coin_list.xml" value="0.22826086956521738" />
       </map>
     </option>
   </component>

@@ -26,18 +26,18 @@ class CoinListAdapter constructor(private var coinlist: List<Coin>) :
 
         @SuppressLint("ResourceAsColor")
         fun bind(coin: Coin) {
-            if (coin.is_active == true) {
+            if (coin.is_active) {
                 coinItemListBinding.button.setBackgroundColor(R.color.black)
                 coinItemListBinding.button.setTextColor(R.color.light_green)
                 coinItemListBinding.button.setText("active")
             } else {
                 coinItemListBinding.button.setBackgroundColor(R.color.teal_200)
-
             }
 
             itemView.setOnClickListener {
                 onItemClick?.invoke(coin)
             }
+
             coinItemListBinding.coin = coin
 
         }

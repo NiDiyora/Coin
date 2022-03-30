@@ -3,7 +3,6 @@ package com.example.coinapp.fragments
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +12,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.example.coinapp.Adapters.CoinListAdapter
-import com.example.coinapp.Preferences.PreferenceUtil
 import com.example.coinapp.R
 import com.example.coinapp.Utils.ApiState
 import com.example.coinapp.ViewModels.CoinViewmodel
@@ -25,11 +25,6 @@ import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 @AndroidEntryPoint
 class CoinListFragment : Fragment() {
@@ -46,7 +41,7 @@ class CoinListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var fragmentCoinListBinding: FragmentCoinListBinding =
+        val fragmentCoinListBinding: FragmentCoinListBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_coin_list, container, false)
         // Inflate the layout for this fragment
 
@@ -68,11 +63,11 @@ class CoinListFragment : Fragment() {
                         fragmentCoinListBinding.coinRecyclerview.isVisible = true
                         fragmentCoinListBinding.progrssbar.isVisible = false
                         coinListAdapter.setCoinData(it.data)
-                        PreferenceUtil.saveArray(it.data)
-
+                        coinViewmodel.addCoin(it.data)
+                        // PreferenceUtil.saveArray(it.data)
 
                         // ModelPreferencesManager.put(it.data,"setdata")
-                      //  val data = ModelPreferencesManager.get<List<Coin>>("setdata")
+                        //  val data = ModelPreferencesManager.get<List<Coin>>("setdata")
 //                        saveData(it.data)
 //                        loadData()
                     }
@@ -82,12 +77,20 @@ class CoinListFragment : Fragment() {
         coinViewmodel.getCoin()
         fragmentCoinListBinding.coinRecyclerview.adapter = coinListAdapter
         coinListAdapter.onItemClick = {
+            val bundle = Bundle()
+            bundle.putString("coinid", it.id) // Serializable Object
+            findNavController().navigate(
+                R.id.action_coinListFragment_to_coinDetailsFragment,
+                bundle
+            )
+
         }
         return fragmentCoinListBinding.root
     }
 
-    private fun saveData(coin:List<Coin>) {
-        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("shared preferences", MODE_PRIVATE)
+    private fun saveData(coin: List<Coin>) {
+        val sharedPreferences: SharedPreferences =
+            requireContext().getSharedPreferences("shared preferences", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         val gson = Gson()
         val json = gson.toJson(coin)
@@ -96,7 +99,7 @@ class CoinListFragment : Fragment() {
     }
 
     private fun loadData() {
-        var coin1:List<Coin>
+        var coin1: List<Coin>
         val sharedPreferences: SharedPreferences =
             requireContext().getSharedPreferences("shared preferences", MODE_PRIVATE)
         val gson = Gson()
@@ -105,8 +108,6 @@ class CoinListFragment : Fragment() {
         coin1 = gson.fromJson<List<Coin>>(json, type)
         if (coin1 == null) {
             coin1 = ArrayList()
-
-
         }
         coinListAdapter.setCoinData(coin1)
     }
